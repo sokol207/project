@@ -1,6 +1,6 @@
 import React from 'react';
 
-function PropertyScreen(): JSX.Element {
+function OfferScreen(): JSX.Element {
   return (
     <div>
       <section className="property">
@@ -302,4 +302,4 @@ function PropertyScreen(): JSX.Element {
     </div>);
 }
 
-export default PropertyScreen;
+export default OfferScreen;
