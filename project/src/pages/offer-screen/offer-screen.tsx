@@ -1,29 +1,41 @@
 import React from 'react';
+import {Offer} from '../../types/Offer';
 
-function OfferScreen(): JSX.Element {
+type OfferScreenProps = {
+  offer: Offer
+}
+
+function YourReview(): JSX.Element {
+  const [textYourReview, setTextYourReview] = React.useState(
+    {
+      review :''
+    }
+  );
+  return (<textarea onChange={(evt) =>{const {name, value} = evt.target; setTextYourReview({...textYourReview, [name]: value});}} value={textYourReview.review} className="reviews__textarea form__textarea" id="review" name="review" placeholder="Tell how was your stay, what you like and what can be improved"/>
+  );
+}
+
+function OfferScreen({offer}:OfferScreenProps): JSX.Element {
+
+  function starMark(mark:number): string{
+    const markStarValue = ((mark / 5) * 100);
+    return `${markStarValue}%`;
+  }
+
   return (
     <div>
       <section className="property">
         <div className="property__gallery-container container">
           <div className="property__gallery">
-            <div className="property__image-wrapper">
-              <img className="property__image" src="img/room.jpg" alt="Photo studio"/>
-            </div>
-            <div className="property__image-wrapper">
-              <img className="property__image" src="img/apartment-01.jpg" alt="Photo studio"/>
-            </div>
-            <div className="property__image-wrapper">
-              <img className="property__image" src="img/apartment-02.jpg" alt="Photo studio"/>
-            </div>
-            <div className="property__image-wrapper">
-              <img className="property__image" src="img/apartment-03.jpg" alt="Photo studio"/>
-            </div>
-            <div className="property__image-wrapper">
-              <img className="property__image" src="img/studio-01.jpg" alt="Photo studio"/>
-            </div>
-            <div className="property__image-wrapper">
-              <img className="property__image" src="img/apartment-01.jpg" alt="Photo studio"/>
-            </div>
+            {offer.photoOffer.map((photo,id)=>
+            {
+              const keyValue = `${id}-${photo}`;
+              return (
+                <div key={keyValue} className="property__image-wrapper">
+                  <img className="property__image" src={photo} alt="Photo studio"/>
+                </div>);
+            }
+            )}
           </div>
         </div>
         <div className="property__container container">
@@ -33,7 +45,7 @@ function OfferScreen(): JSX.Element {
             </div>
             <div className="property__name-wrapper">
               <h1 className="property__name">
-                Beautiful &amp; luxurious studio at great location
+                {offer.name}
               </h1>
               <button className="property__bookmark-button button" type="button">
                 <svg className="property__bookmark-icon" width="31" height="33">
@@ -44,10 +56,10 @@ function OfferScreen(): JSX.Element {
             </div>
             <div className="property__rating rating">
               <div className="property__stars rating__stars">
-                <span style={{width: '80%'}}></span>
+                <span style={{width: starMark(offer.mark)}}/>
                 <span className="visually-hidden">Rating</span>
               </div>
-              <span className="property__rating-value rating__value">4.8</span>
+              <span className="property__rating-value rating__value">{offer.mark}</span>
             </div>
             <ul className="property__features">
               <li className="property__feature property__feature--entire">
@@ -67,36 +79,15 @@ function OfferScreen(): JSX.Element {
             <div className="property__inside">
               <h2 className="property__inside-title">What&apos;s inside</h2>
               <ul className="property__inside-list">
-                <li className="property__inside-item">
-                  Wi-Fi
-                </li>
-                <li className="property__inside-item">
-                  Washing machine
-                </li>
-                <li className="property__inside-item">
-                  Towels
-                </li>
-                <li className="property__inside-item">
-                  Heating
-                </li>
-                <li className="property__inside-item">
-                  Coffee machine
-                </li>
-                <li className="property__inside-item">
-                  Baby seat
-                </li>
-                <li className="property__inside-item">
-                  Kitchen
-                </li>
-                <li className="property__inside-item">
-                  Dishwasher
-                </li>
-                <li className="property__inside-item">
-                  Cabel TV
-                </li>
-                <li className="property__inside-item">
-                  Fridge
-                </li>
+                {offer.insides.map((inside,id)=>
+                {
+                  const keyValue = `${id}-${inside}`;
+                  return (
+                    <li key={keyValue} className="property__inside-item">
+                      {inside}
+                    </li>);
+                }
+                )}
               </ul>
             </div>
             <div className="property__host">
@@ -180,7 +171,7 @@ function OfferScreen(): JSX.Element {
                     </svg>
                   </label>
                 </div>
-                <textarea className="reviews__textarea form__textarea" id="review" name="review" placeholder="Tell how was your stay, what you like and what can be improved"/>
+                {<YourReview/>}
                 <div className="reviews__button-wrapper">
                   <p className="reviews__help">
                     To submit review please make sure to set <span className="reviews__star">rating</span> and describe
