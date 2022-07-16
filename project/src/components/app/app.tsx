@@ -8,24 +8,30 @@ import OfferScreen from '../../pages/offer-screen/offer-screen';
 import ScrollToTop from '../scroll-to-top/scroll-to-top';
 import PrivateRoute from '../private-route/private-route';
 import FavoritesScreen from '../../pages/favorites-screen/favorites-screen';
+import {Offers} from '../../types/Offer';
+import {OfferCard, OfferListForPage} from '../../types/OfferCard';
 
 type AppScreenProps = {
   placesCount: number;
+  offers: Offers;
+  offerListForPage: OfferListForPage;
+  offerList: OfferCard[];
 }
 
-function App({placesCount}:AppScreenProps): JSX.Element {
+function App({placesCount, offers, offerListForPage, offerList}:AppScreenProps): JSX.Element {
+  const [firstOffer] = offers;
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
         <Route path={AppRoute.Main} element={<Layout/>}>
-          <Route index element={<LocationsScreen placesCount={placesCount}/>} />
+          <Route index element={<LocationsScreen placesCount={placesCount} offers={offerList}/>} />
           <Route path={AppRoute.Login} element={<LoginScreen/>} />
-          <Route path={AppRoute.Offer} element={<OfferScreen/>} />
+          <Route path={AppRoute.Offer} element={<OfferScreen offer={firstOffer}/>} />
           <Route path={AppRoute.Favorites}
             element={
-              <PrivateRoute authorizationStatus={AuthorizationStatus.NoAuth}>
-                <FavoritesScreen/>
+              <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
+                <FavoritesScreen offerListForPage={offerListForPage}/>
               </PrivateRoute>
             }
           />
