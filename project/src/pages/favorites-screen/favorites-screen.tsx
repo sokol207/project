@@ -32,7 +32,7 @@ function FavoritesScreen({offerListForPage}:FavoritesScreenProps): JSX.Element {
                       </div>
                       <div className="favorites__image-wrapper place-card__image-wrapper">
                         <Link to="/offer/1">
-                          <img className="place-card__image" src={offer.photoOffer} width="150" height="110" alt="Place image"/>
+                          <img className="place-card__image" src={offer.photoOffer} width="150" height="110" alt={''}/>
                         </Link>
                       </div>
                       <div className="favorites__card-info place-card__info">

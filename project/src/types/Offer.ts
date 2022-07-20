@@ -1,6 +1,12 @@
-export type Comment = {
+import {OfferCard} from './OfferCard';
+import React from 'react';
+
+export type CommentType = {
   text: string;
-  mark: number;
+  name: string;
+  image:string;
+  mark: string;
+  dateTime: string;
 }
 
 export type Offer = {
@@ -9,7 +15,20 @@ export type Offer = {
   mark: number;
   cost: number;
   insides: string[];
-  comments: Comment[];
+  comments: CommentType[];
+  host:{
+    name:string;
+    image:string;
+    text:string;
+    userStatus:string;
+  }
 };
 
 export type Offers = Offer[];
+
+export type OfferToList ={
+  keyValueOffer: string;
+  offer: OfferCard;
+  activeOfferCard:string;
+  setActiveOfferCard: React.Dispatch<React.SetStateAction<string>>
+};

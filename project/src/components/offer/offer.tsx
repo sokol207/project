@@ -2,16 +2,17 @@ import {OfferCard} from '../../types/OfferCard';
 import {Link} from 'react-router-dom';
 import React from 'react';
 
-type OfferProps = {
+export type OfferProps = {
   keyValueOffer: string;
   offer: OfferCard;
   activeOfferCard:string;
   setActiveOfferCard: React.Dispatch<React.SetStateAction<string>>;
   articleClassName:string;
   divClassName:string;
+  citiesImageClassName:string;
 }
 
-function Offer({keyValueOffer,offer,activeOfferCard,setActiveOfferCard,articleClassName,divClassName}:OfferProps): JSX.Element{
+function Offer({keyValueOffer,offer,activeOfferCard,setActiveOfferCard,articleClassName,citiesImageClassName,divClassName}:OfferProps): JSX.Element{
   return (
     <article className={`${articleClassName} place-card`} onMouseOver={()=>{setActiveOfferCard(`/offer/${keyValueOffer}`);}}>
       {
@@ -20,9 +21,9 @@ function Offer({keyValueOffer,offer,activeOfferCard,setActiveOfferCard,articleCl
           <span>{offer.placeCard}</span>
         </div>
       }
-      <div className="cities__image-wrapper place-card__image-wrapper">
+      <div className={`${citiesImageClassName}  place-card__image-wrapper`}>
         <Link to={activeOfferCard}>
-          <img className="place-card__image" src={offer.photoOffer} width="260" height="200" alt="Place image"/>
+          <img className="place-card__image" src={offer.photoOffer} width="260" height="200" alt={''}/>
         </Link>
       </div>
       <div className={divClassName}>

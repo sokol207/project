@@ -3,6 +3,7 @@ import {OfferCard} from '../../types/OfferCard';
 import Map from '../../components/map/map';
 import {City, Points, Point} from '../../types/types';
 import ListOffer from '../../components/listOffer/listOffer';
+import {TypeOfferList} from '../../const';
 
 type LocationsScreenProps = {
   placesCount: number;
@@ -86,14 +87,13 @@ function LocationsScreen({placesCount,offers, city, points}:LocationsScreenProps
                 </ul>}
             </form>
             <div className="cities__places-list places__list tabs__content">
-              <ListOffer offers={offers} onListItemHover={onListItemHover} activeOfferCard={activeOfferCard} setActiveOfferCard={setActiveOfferCard}/>
+              <ListOffer typeList={TypeOfferList.CITY} offers={offers} onListItemHover={onListItemHover} activeOfferCard={activeOfferCard} setActiveOfferCard={setActiveOfferCard}/>
             </div>
           </section>
 
           <div className="cities__right-section">
-
             <section className="cities__map map">
-              <Map city={city} points={points} selectedPoint={selectedPoint}/>
+              <Map city={city} points={points} selectedPoint={selectedPoint} height={'810px'} width={'525px'} marginLeft={'inherit'} marginRight={'auto'}/>
             </section>
           </div>
         </div>

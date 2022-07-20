@@ -1,42 +1,3 @@
-// import React, {useState} from 'react';
-// import List from '../list/list';
-// import Map from '../map/map';
-// import {City, Points, Point} from '../../types/types';
-//
-// type AppProps = {
-//   city: City;
-//   points: Points;
-// };
-//
-// function App(props: AppProps): JSX.Element {
-//   const {city, points} = props;
-//
-//   const [selectedPoint, setSelectedPoint] = useState<Point | undefined>(
-//     undefined
-//   );
-//
-//   const onListItemHover = (listItemName: string) => {
-//     const currentPoint = points.find((point) => point.title === listItemName);
-//
-//     setSelectedPoint(currentPoint);
-//   };
-//
-//   return (
-//     <React.Fragment>
-//       <header>
-//         <h1>Парки города {city.title}:</h1>
-//       </header>
-//       <main>
-//         <List points={points} onListItemHover={onListItemHover} />
-//         <Map city={city} points={points} selectedPoint={selectedPoint} />
-//       </main>
-//     </React.Fragment>
-//   );
-// }
-//
-// export default App;
-
-
 import React from 'react';
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom';
 import LoginScreen from '../../pages/login-screen/login-screen';
@@ -49,31 +10,33 @@ import PrivateRoute from '../private-route/private-route';
 import FavoritesScreen from '../../pages/favorites-screen/favorites-screen';
 import {Offers} from '../../types/Offer';
 import {OfferCard, OfferListForPage} from '../../types/OfferCard';
-import {POINTS} from '../../mocks/points';
-import {CITY} from '../../mocks/city';
+import {City, Points} from '../../types/types';
 
 type AppScreenProps = {
   placesCount: number;
   offers: Offers;
   offerListForPage: OfferListForPage;
   offerList: OfferCard[];
+  otherOffer: OfferCard[];
+  city: City;
+  points: Points;
+  pointsOtherOffers: Points;
 }
 
-function App({placesCount, offers, offerListForPage, offerList}:AppScreenProps): JSX.Element {
-  const [firstOffer] = offers;
+function App(props:AppScreenProps): JSX.Element {
+  const [firstOffer] = props.offers;
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
         <Route path={AppRoute.Main} element={<Layout/>}>
-          <Route index element={<LocationsScreen placesCount={placesCount} offers={offerList} points={POINTS} city={CITY}/>} />
-          {/*<Route index element={<LocationsScreen points={POINTS} city={CITY}/>} />*/}
+          <Route index element={<LocationsScreen placesCount={props.placesCount} offers={props.offerList} points={props.points} city={props.city}/>} />
           <Route path={AppRoute.Login} element={<LoginScreen/>} />
-          <Route path={AppRoute.Offer} element={<OfferScreen offer={firstOffer}/>} />
+          <Route path={AppRoute.Offer} element={<OfferScreen offer={firstOffer} otherOffer={props.otherOffer} points={props.pointsOtherOffers} city={props.city}/>} />
           <Route path={AppRoute.Favorites}
             element={
               <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
-                <FavoritesScreen offerListForPage={offerListForPage}/>
+                <FavoritesScreen offerListForPage={props.offerListForPage}/>
               </PrivateRoute>
             }
           />
@@ -90,4 +53,5 @@ function App({placesCount, offers, offerListForPage, offerList}:AppScreenProps):
       </Routes>
     </BrowserRouter>);
 }
+
 export default App;
