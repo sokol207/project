@@ -4,7 +4,7 @@ import CommentList from '../../components/commentList/commentList';
 import ListOffer from '../../components/listOffer/listOffer';
 import {TypeOfferList} from '../../const';
 import {OfferCard} from '../../types/OfferCard';
-import {City, Point, Points} from '../../types/types';
+import {City, Points, PointWithTitle} from '../../types/types';
 import Map from '../../components/map/map';
 
 type OfferScreenProps = {
@@ -26,7 +26,7 @@ function YourReview(): JSX.Element {
 
 function OfferScreen({offer,otherOffer, city, points}:OfferScreenProps): JSX.Element {
   const [activeOfferCard,setActiveOfferCard] = React.useState('1');
-  const [selectedPoint, setSelectedPoint] = useState<Point | undefined>(
+  const [selectedPoint, setSelectedPoint] = useState<PointWithTitle | undefined>(
     undefined
   );
 

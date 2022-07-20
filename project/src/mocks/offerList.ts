@@ -23,7 +23,7 @@ export const offerCard : OfferCard[] = [
     bookmark: true,
     placeCard: '',
     point: {
-      lat: 52.3909553943508,
+      lat: 52.369553943508,
       lng: 4.85309666406198
     }
   },
@@ -37,7 +37,7 @@ export const offerCard : OfferCard[] = [
     placeCard: '',
     point: {
       lat: 52.369553943508,
-      lng: 4.85309666406198
+      lng: 4.929309666406198
     }
   },
   {
@@ -49,7 +49,7 @@ export const offerCard : OfferCard[] = [
     bookmark: false,
     placeCard: 'Premium',
     point: {
-      lat: 52.3909553943508,
+      lat: 52.3809553943508,
       lng: 4.929309666406198
     }
   }
@@ -59,6 +59,22 @@ export const offerList : OfferListForPage = [
   {
     regionName: 'Amsterdam',
     offers: offerCard
+  },
+  {
+    regionName: 'Paris',
+    offers:   [{
+      photoOffer :'img/apartment-03.jpg',
+      mark: '100%',
+      name: 'Nice, cozy, warm big bed apartment',
+      cost: 180,
+      type: 'Apartment',
+      bookmark: false,
+      placeCard: 'Premium',
+      point: {
+        lat: 48.7,
+        lng: 2.2,
+      }
+    }]
   }
 ];
 

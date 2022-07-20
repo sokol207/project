@@ -1,18 +1,20 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import App from './components/app/app';
 import {offers} from './mocks/offers';
-import {offerCard, offerCardForOtherPlaces, offerList} from './mocks/offerList';
-import {POINTS, POINTS_OTHER_OFFERS} from './mocks/points';
+import { offerCardForOtherPlaces, offerList} from './mocks/offerList';
+import {POINTS_OTHER_OFFERS} from './mocks/points';
 import {CITY} from './mocks/city';
+import {Provider} from 'react-redux';
+import {store} from './store';
 
-const Setting = {
-  PLACES_COUNT: 3,
-};
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App placesCount={Setting.PLACES_COUNT} offers={offers} offerListForPage={offerList} offerList={offerCard} otherOffer={offerCardForOtherPlaces} pointsOtherOffers={POINTS_OTHER_OFFERS} city={CITY} points={POINTS}/>
-  </React.StrictMode>,
-  document.getElementById('root')
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement,
+);
+
+root.render(
+  <Provider store={store}>
+    <App offers={offers} offerListForPage={offerList} otherOffer={offerCardForOtherPlaces} pointsOtherOffers={POINTS_OTHER_OFFERS} city={CITY}/>
+  </Provider>
 );
