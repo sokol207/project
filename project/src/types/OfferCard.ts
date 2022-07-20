@@ -4,6 +4,12 @@ export type OfferCard = {
   mark: string;
   cost: number;
   type: string;
+  bookmark: boolean;
+  placeCard: string;
+  point:{
+         lat:number;
+         lng:number;
+        }
 };
 
 export type OfferList = {
