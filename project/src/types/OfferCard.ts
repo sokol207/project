@@ -6,6 +6,7 @@ export type OfferCard = {
   type: string;
   bookmark: boolean;
   placeCard: string;
+  popularNum: number;
   point:{
          lat:number;
          lng:number;
