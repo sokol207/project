@@ -26,7 +26,7 @@ function FavoritesScreen({offerListForPage}:FavoritesScreenProps): JSX.Element {
                 {offerList.offers.map((offer,idOffer )=>{
                   const keyValueOffer = `${idOffer}-${offer}`;
                   return (
-                    <article key={keyValueOffer} className="favorites__card pimg/apartment-small-03.jpglace-card">
+                    <article key={keyValueOffer} className="favorites__card place-card">
                       <div className="place-card__mark">
                         <span>Premium</span>
                       </div>
