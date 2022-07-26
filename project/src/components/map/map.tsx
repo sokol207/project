@@ -9,6 +9,10 @@ type MapProps = {
   city: City;
   points: Points;
   selectedPoint: Point | undefined;
+  height:string;
+  width:string;
+  marginLeft:string;
+  marginRight:string;
 };
 
 const defaultCustomIcon = new Icon({
@@ -48,7 +52,7 @@ function Map(props: MapProps): JSX.Element {
     }
   }, [map, points, selectedPoint]);
 
-  return <div style={{height: '700px'}} ref={mapRef}></div>;
+  return <div style={{height: props.height, width: props.width, marginLeft: props.marginLeft, marginRight: props.marginRight}} ref={mapRef}></div>;
 }
 
 export default Map;
