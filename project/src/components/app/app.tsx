@@ -13,13 +13,10 @@ import {OfferCard, OfferListForPage} from '../../types/OfferCard';
 import {City, Points} from '../../types/types';
 
 type AppScreenProps = {
-  placesCount: number;
   offers: Offers;
   offerListForPage: OfferListForPage;
-  offerList: OfferCard[];
   otherOffer: OfferCard[];
   city: City;
-  points: Points;
   pointsOtherOffers: Points;
 }
 
@@ -30,7 +27,7 @@ function App(props:AppScreenProps): JSX.Element {
       <ScrollToTop />
       <Routes>
         <Route path={AppRoute.Main} element={<Layout/>}>
-          <Route index element={<LocationsScreen placesCount={props.placesCount} offers={props.offerList} points={props.points} city={props.city}/>} />
+          <Route index element={<LocationsScreen/>} />
           <Route path={AppRoute.Login} element={<LoginScreen/>} />
           <Route path={AppRoute.Offer} element={<OfferScreen offer={firstOffer} otherOffer={props.otherOffer} points={props.pointsOtherOffers} city={props.city}/>} />
           <Route path={AppRoute.Favorites}

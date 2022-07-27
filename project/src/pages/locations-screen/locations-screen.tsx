@@ -1,24 +1,36 @@
 import React, {useState} from 'react';
-import {OfferCard} from '../../types/OfferCard';
 import Map from '../../components/map/map';
-import {City, Points, Point} from '../../types/types';
+import {Points, PointWithTitle} from '../../types/types';
 import ListOffer from '../../components/listOffer/listOffer';
 import {TypeOfferList} from '../../const';
+import CityListComponent from '../../components/cityList/cityList';
+import {useAppSelector} from '../../hooks';
+import {CityList} from '../../const';
+import {OfferCard} from '../../types/OfferCard';
 
-type LocationsScreenProps = {
-  placesCount: number;
-  offers: OfferCard[];
-  city: City;
-  points: Points;
+
+function pointForMap(offer:OfferCard): PointWithTitle {
+  return {title:offer.name,point:offer.point};
 }
 
-function LocationsScreen({placesCount,offers, city, points}:LocationsScreenProps): JSX.Element {
+function pointsForMap(OfferFromCurrentCity: OfferCard[]):Points
+{
+  if(OfferFromCurrentCity.length > 0) {
+    return OfferFromCurrentCity.map(pointForMap);
+  }else {
+    return [];
+  }
+}
+
+function LocationsScreen(): JSX.Element {
   const [activeOfferCard,setActiveOfferCard] = React.useState('1');
   const [isClickPopular,setIsClickPopular] = React.useState(false);
-
-  const [selectedPoint, setSelectedPoint] = useState<Point | undefined>(
+  const [selectedPoint, setSelectedPoint] = useState<PointWithTitle | undefined>(
     undefined
   );
+  const offerFromCurrentCity = useAppSelector((state)=>state.offers);
+  const currentCity = useAppSelector((state)=>state.city);
+  const points = pointsForMap(offerFromCurrentCity);
 
   const onListItemHover = (listItemName: string) => {
     const currentPoint = points.find((point) => point.title === listItemName);
@@ -32,36 +44,7 @@ function LocationsScreen({placesCount,offers, city, points}:LocationsScreenProps
       <div className="tabs">
         <section className="locations container">
           <ul className="locations__list tabs__list">
-            <li className="locations__item">
-              <a className="locations__item-link tabs__item" href="#">
-                <span>Paris</span>
-              </a>
-            </li>
-            <li className="locations__item">
-              <a className="locations__item-link tabs__item" href="#">
-                <span>Cologne</span>
-              </a>
-            </li>
-            <li className="locations__item">
-              <a className="locations__item-link tabs__item" href="#">
-                <span>Brussels</span>
-              </a>
-            </li>
-            <li className="locations__item">
-              <a className="locations__item-link tabs__item tabs__item--active">
-                <span>Amsterdam</span>
-              </a>
-            </li>
-            <li className="locations__item">
-              <a className="locations__item-link tabs__item" href="#">
-                <span>Hamburg</span>
-              </a>
-            </li>
-            <li className="locations__item">
-              <a className="locations__item-link tabs__item" href="#">
-                <span>Dusseldorf</span>
-              </a>
-            </li>
+            <CityListComponent cityList={CityList} currentCityName={currentCity.name}/>
           </ul>
         </section>
       </div>
@@ -69,7 +52,7 @@ function LocationsScreen({placesCount,offers, city, points}:LocationsScreenProps
         <div className="cities__places-container container">
           <section className="cities__places places">
             <h2 className="visually-hidden">Places</h2>
-            <b className="places__found">{placesCount} places to stay in Amsterdam</b>
+            <b className="places__found">{offerFromCurrentCity.length} places to stay in {currentCity.name}</b>
             <form className="places__sorting" action="#" method="get">
               <span className="places__sorting-caption">Sort by</span>
               <span className="places__sorting-type" tabIndex={0} onClick={()=>{setIsClickPopular((_isClickPopular) => !_isClickPopular);}}>
@@ -87,13 +70,13 @@ function LocationsScreen({placesCount,offers, city, points}:LocationsScreenProps
                 </ul>}
             </form>
             <div className="cities__places-list places__list tabs__content">
-              <ListOffer typeList={TypeOfferList.CITY} offers={offers} onListItemHover={onListItemHover} activeOfferCard={activeOfferCard} setActiveOfferCard={setActiveOfferCard}/>
+              <ListOffer typeList={TypeOfferList.CITY} offers={offerFromCurrentCity} onListItemHover={onListItemHover} activeOfferCard={activeOfferCard} setActiveOfferCard={setActiveOfferCard}/>
             </div>
           </section>
 
           <div className="cities__right-section">
             <section className="cities__map map">
-              <Map city={city} points={points} selectedPoint={selectedPoint} height={'810px'} width={'525px'} marginLeft={'inherit'} marginRight={'auto'}/>
+              <Map city={currentCity} points={points} selectedPoint={selectedPoint} height={'810px'} width={'525px'} marginLeft={'inherit'} marginRight={'auto'}/>
             </section>
           </div>
         </div>
