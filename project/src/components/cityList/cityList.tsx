@@ -13,9 +13,9 @@ export default function CityListComponent(props:CityListComponentProps){
   return (
     <>
       {props.cityList.map((city, id)=>{
-        const keyValueOffer = `${id}-${city}`;
+        const keyValue = `${id}-${city}`;
         return(
-          <li className="locations__item" key={keyValueOffer} onClick={() => dispatch(setCity(city.name))}>
+          <li className="locations__item" key={keyValue} onClick={() => dispatch(setCity(city.name))}>
             <CityName name={city.name} className={(props.currentCityName === city.name) ? 'locations__item-link tabs__item tabs__item--active' : 'locations__item-link tabs__item'}/>
           </li>);
       })}
