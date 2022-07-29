@@ -1,7 +1,7 @@
 import {City} from '../../types/types';
 import {useAppDispatch} from '../../hooks';
 import {setCity} from '../../store/actions';
-import CityName from './cityName';
+import CityName from './city-name';
 
 type CityListComponentProps = {
   cityList: City[];

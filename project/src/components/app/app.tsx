@@ -1,27 +1,25 @@
 import React from 'react';
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom';
 import LoginScreen from '../../pages/login-screen/login-screen';
-import {AppRoute, AuthorizationStatus} from '../../const';
+import {AppRoute, AuthorizationStatus, isCheckedAuth} from '../../const';
 import Layout from '../layout/layout';
 import LocationsScreen from '../../pages/locations-screen/locations-screen';
 import OfferScreen from '../../pages/offer-screen/offer-screen';
 import ScrollToTop from '../scroll-to-top/scroll-to-top';
 import PrivateRoute from '../private-route/private-route';
 import FavoritesScreen from '../../pages/favorites-screen/favorites-screen';
-import {Offers} from '../../types/Offer';
-import {OfferCard, OfferListForPage} from '../../types/OfferCard';
-import {City, Points} from '../../types/types';
+import {useAppSelector} from '../../hooks';
+import LoadingScreen from '../../pages/loading-screen/loading-screen';
 
-type AppScreenProps = {
-  offers: Offers;
-  offerListForPage: OfferListForPage;
-  otherOffer: OfferCard[];
-  city: City;
-  pointsOtherOffers: Points;
-}
+function App(): JSX.Element {
+  const {authorizationStatus, isDataLoaded} = useAppSelector((state) => state);
 
-function App(props:AppScreenProps): JSX.Element {
-  const [firstOffer] = props.offers;
+  if (isCheckedAuth(authorizationStatus) || isDataLoaded) {
+    return (
+      <LoadingScreen />
+    );
+  }
+
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -29,11 +27,11 @@ function App(props:AppScreenProps): JSX.Element {
         <Route path={AppRoute.Main} element={<Layout/>}>
           <Route index element={<LocationsScreen/>} />
           <Route path={AppRoute.Login} element={<LoginScreen/>} />
-          <Route path={AppRoute.Offer} element={<OfferScreen offer={firstOffer} otherOffer={props.otherOffer} points={props.pointsOtherOffers} city={props.city}/>} />
+          <Route path={AppRoute.Offer} element={<OfferScreen/>} />
           <Route path={AppRoute.Favorites}
             element={
               <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
-                <FavoritesScreen offerListForPage={props.offerListForPage}/>
+                <FavoritesScreen/>
               </PrivateRoute>
             }
           />

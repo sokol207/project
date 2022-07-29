@@ -1,20 +1,17 @@
 export type City = {
   name: string;
-  point:{
-    lat: number;
-    lng: number;
-  };
-  zoom: number;
+  location:Point;
 };
 
 export type Point = {
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
+  zoom: number;
 };
 
-export type PointWithTitle = {
-  title: string;
+export type PointWithId = {
+  id: number;
   point: Point;
 };
 
-export type Points = PointWithTitle[];
+export type PointsWithId = PointWithId[];

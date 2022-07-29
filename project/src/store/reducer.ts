@@ -1,64 +1,86 @@
-import {offerList} from '../mocks/offerList';
-import {CityList, SortList} from '../const';
+import {AuthorizationStatus, CityList, SortList} from '../const';
 import {createReducer} from '@reduxjs/toolkit';
-import {setCity, setFirstCity, setSort} from './actions';
-import {OfferCard} from '../types/OfferCard';
+import {
+  requireAuthorization,
+  setCity,
+  setDataLoadedStatus,
+  setError,
+  setFirstCity,
+  setOffers,
+  setSort
+} from './actions';
+import {CommentsType, OfferCard, OfferList} from '../types/ofer-card';
+import {State} from '../types/store';
+import {City} from '../types/types';
 
+function getOfferFavoriteList(state:State): OfferList[] {
+  const offerListByRegion:OfferList[] = [];
+  CityList.forEach((city) => {
+    if (state.favoriteOffers.filter((offers) => offers.regionName === city.name).length > 0) {
+      offerListByRegion.push({
+        regionName: city.name,
+        offers: state.favoriteOffers.filter((offers) => offers.regionName === city.name)[0].offers
+      });
+    }
+  });
+  return offerListByRegion;
+}
 
-const initialState = {
+type initialStateType = {
+  city: City;
+  offers: OfferCard[];
+  offerList: OfferCard[];
+  sortBy: string;
+  favoriteOffers: OfferList[];
+  currentOffer: OfferCard | null;
+  comments: CommentsType;
+  otherOffers: OfferCard[];
+  authorizationStatus: string;
+  error: string | null;
+  isDataLoaded: boolean;
+}
+
+const initialState : initialStateType = {
   city: CityList[0],
-  offers: offerList.filter((offers)=>offers.regionName === CityList[0].name)[0].offers,
-  sortBy: SortList[0]
+  offers: [],
+  offerList: [],
+  sortBy: SortList[0],
+  favoriteOffers: [],
+  currentOffer: null,
+  comments: [],
+  otherOffers: [],
+  authorizationStatus: AuthorizationStatus.Unknown,
+  error: null,
+  isDataLoaded: false
 };
 
 function sortByLowPrice(a:OfferCard,b:OfferCard)
 {
-  return a.cost - b.cost;
+  return a.price - b.price;
 }
 function sortByHighPrice(a:OfferCard,b:OfferCard)
 {
-  return b.cost - a.cost;
+  return b.price - a.price;
 }
 
 function sortByRated(a:OfferCard,b:OfferCard)
 {
-  if (a.mark > b.mark){
-    return 1;
-  } else {
-    if (a.mark === b.mark){
-      return 0;
-    } else {
-      return -1;
-    }
-  }
+  return a.rating - b.rating;
 }
-function sortByPopular(a:OfferCard,b:OfferCard)
-{
-  if (a.popularNum > b.popularNum){
-    return 1;
-  } else {
-    if (a.popularNum === b.popularNum){
-      return 0;
-    } else {
-      return -1;
-    }
-  }
+function filterByCity(state:State) {
+  const offersFromCurrentCity = state.offerList.filter((offers)=>offers.city.name === state.city.name);
+  return offersFromCurrentCity.length > 0 ? offersFromCurrentCity : [];
 }
 
 export const reducer = createReducer(initialState, (builder) => {
   builder
     .addCase(setCity, (state, action) =>{
       state.city = CityList.filter((city) => city.name === action.payload)[0];
-      const offersFromCurrentCity = offerList.filter((offers)=>offers.regionName === state.city.name);
-      if (offersFromCurrentCity.length > 0) {
-        state.offers = offersFromCurrentCity[0].offers;
-      } else {
-        state.offers = [];
-      }
+      state.offers = filterByCity(state);
     })
     .addCase(setFirstCity, (state) =>{
       state.city = initialState.city;
-      state.offers = initialState.offers;
+      state.offers = filterByCity(state);
     })
     .addCase(setSort, (state, action) =>{
       switch (action.payload){
@@ -78,10 +100,22 @@ export const reducer = createReducer(initialState, (builder) => {
           break;
         }
         case 'Popular' : {
-          state.offers = state.offers.sort(sortByPopular);
+          state.offers = filterByCity(state);
           state.sortBy = action.payload;
           break;
         }
       }
+    }).addCase(setOffers, (state, action) =>{
+      state.offerList = action.payload;
+      state.offers = filterByCity(state);
+      state.favoriteOffers = getOfferFavoriteList(state);
+    }).addCase(requireAuthorization, (state, action) => {
+      state.authorizationStatus = action.payload;
+    })
+    .addCase(setError, (state, action) => {
+      state.error = action.payload;
+    })
+    .addCase(setDataLoadedStatus, (state, action) => {
+      state.isDataLoaded = action.payload;
     });
 });
