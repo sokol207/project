@@ -2,9 +2,10 @@ import React, {FormEvent, useRef} from 'react';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {AuthData} from '../../types/auth-data';
 import {loginAction} from '../../store/api-actions';
-import {Link} from 'react-router-dom';
-import {AppRoute} from '../../const';
+import {Link, Navigate} from 'react-router-dom';
+import {AppRoute, AuthorizationStatus} from '../../const';
 import {getCity} from '../../store/data-process/selectors';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
 
 function LoginScreen(): JSX.Element {
   const loginRef = useRef<HTMLInputElement | null>(null);
@@ -27,7 +28,10 @@ function LoginScreen(): JSX.Element {
   };
 
   const currentCity = useAppSelector(getCity);
-
+  const userStatus = useAppSelector(getAuthorizationStatus);
+  if (userStatus === AuthorizationStatus.Auth) {
+    return <Navigate to={AppRoute.Main}/>;
+  }
   return (
     <div className="page page--gray page--login">
       <main className="page__main page__main--login">
@@ -41,7 +45,7 @@ function LoginScreen(): JSX.Element {
               </div>
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">Password</label>
-                <input className="login__input form__input" type="password" name="password" placeholder="Password" required ref={passwordRef}/>
+                <input className="login__input form__input" type="password" name="password" placeholder="Password" required ref={passwordRef} autoComplete="on"/>
               </div>
               <button className="login__submit form__submit button" type="submit">Sign in</button>
             </form>

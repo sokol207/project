@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 type CityProps = {
   name :string;
@@ -7,9 +8,9 @@ type CityProps = {
 
 export default function CityName(props:CityProps){
   return (
-    <a className={props.className} href="/#">
+    <Link className={props.className} to="/">
       <span>{props.name}</span>
-    </a>
+    </Link>
   );
 }
 

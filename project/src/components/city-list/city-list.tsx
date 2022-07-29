@@ -2,6 +2,7 @@ import {City} from '../../types/types';
 import {useAppDispatch} from '../../hooks';
 import CityName from './city-name';
 import { setCity } from '../../store/data-process/data-process';
+import React from 'react';
 
 type CityListComponentProps = {
   cityList: City[];

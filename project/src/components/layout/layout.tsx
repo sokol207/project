@@ -1,8 +1,14 @@
 import {Link, Outlet} from 'react-router-dom';
 import {AppRoute} from '../../const';
 import React from 'react';
+import SignIn from '../sign/sign-in';
+import {useAppSelector} from '../../hooks';
+import {getCountFavoriteOffers, getUser} from '../../store/user-process/selectors';
+import SignOut from '../sign/sign-out';
 
 function Layout() {
+  const currentUser = useAppSelector(getUser);
+  const countFavoriteOffers = useAppSelector(getCountFavoriteOffers);
   return (
     <React.Fragment>
       <header className="header">
@@ -13,17 +19,7 @@ function Layout() {
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41"/>
               </Link>
             </div>
-            <nav className="header__nav">
-              <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <Link className="header__nav-link header__nav-link--profile" to={AppRoute.Login}>
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__login">Sign in</span>
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+            {currentUser === null ? <SignIn/> : <SignOut user={currentUser} countFavoritesOffer={countFavoriteOffers}/>}
           </div>
         </div>
       </header>

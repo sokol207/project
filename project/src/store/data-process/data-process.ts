@@ -2,7 +2,7 @@ import {HotelsData} from '../../types/state';
 import { CityList, NameSpace, SortList} from '../../const';
 import {createSlice} from '@reduxjs/toolkit';
 import {addComment, fetchHotelsAction, getOffer} from '../api-actions';
-import {OfferCard, OfferList} from '../../types/offer-card';
+import {OfferCard} from '../../types/offer-card';
 
 
 const initialState: HotelsData = {
@@ -10,7 +10,6 @@ const initialState: HotelsData = {
   offers: [],
   offerList: [],
   sortBy: SortList[0],
-  favoriteOffers: [],
   currentOfferId: null,
   currentOfferIdFromParam: null,
   currentOffer: null,
@@ -37,17 +36,23 @@ function filterByCity(allOffers: OfferCard[],cityName: string) {
   const offersFromCurrentCity = allOffers.filter((offer)=>offer.city.name === cityName);
   return offersFromCurrentCity.length > 0 ? offersFromCurrentCity : [];
 }
-function getOfferFavoriteList(stateData:HotelsData): OfferList[] {
-  const offerListByRegion:OfferList[] = [];
-  CityList.forEach((city) => {
-    if (stateData.favoriteOffers.filter((offers) => offers.regionName === city.name).length > 0) {
-      offerListByRegion.push({
-        regionName: city.name,
-        offers: stateData.favoriteOffers.filter((offers) => offers.regionName === city.name)[0].offers
-      });
+
+function sortOffers(sortBy:string, stateForSort:HotelsData) {
+  switch (sortBy){
+    case 'Price: low to high' : {
+      return stateForSort.offers.sort(sortByLowPrice);
     }
-  });
-  return offerListByRegion;
+    case 'Price: high to low' : {
+      return stateForSort.offers.sort(sortByHighPrice);
+    }
+    case 'Top rated first' : {
+      return stateForSort.offers.sort(sortByRated);
+    }
+    case 'Popular' : {
+      return filterByCity(stateForSort.offerList,stateForSort.city.name);
+    }
+  }
+  return stateForSort.offers;
 }
 
 export const dataProcess = createSlice({
@@ -58,54 +63,15 @@ export const dataProcess = createSlice({
       state.city = CityList.filter((city) => city.name === action.payload)[0];
       state.offers = filterByCity(state.offerList,state.city.name);
     },
-    setFirstCity:  (state) =>{
-      state.city = initialState.city;
-      state.offers = filterByCity(state.offerList,state.city.name);
-    },
     setSort: (state, action) =>{
-      switch (action.payload){
-        case 'Price: low to high' : {
-          state.offers = state.offers.sort(sortByLowPrice);
-          state.sortBy = action.payload;
-          break;
-        }
-        case 'Price: high to low' : {
-          state.offers = state.offers.sort(sortByHighPrice);
-          state.sortBy = action.payload;
-          break;
-        }
-        case 'Top rated first' : {
-          state.offers = state.offers.sort(sortByRated);
-          state.sortBy = action.payload;
-          break;
-        }
-        case 'Popular' : {
-          state.offers = filterByCity(state.offerList,state.city.name);
-          state.sortBy = action.payload;
-          break;
-        }
-      }
-    },
-    setOffers : (state, action) =>{
-      state.offerList = action.payload;
-      state.offers = filterByCity(state.offerList,state.city.name);
-      state.favoriteOffers = getOfferFavoriteList(state);
-    },
-    setDataLoadedStatus : (state, action) => {
-      state.isDataLoaded = action.payload;
-    },
-    setCurrentOffer : (state, action) => {
-      state.currentOffer = action.payload;
-      state.currentOfferId = state.currentOffer === null ? null : state.currentOffer.id;
-    },
-    setComments : (state, action) => {
-      state.comments = action.payload;
-    },
-    setOtherOffers : (state, action) => {
-      state.otherOffers = action.payload;
+      state.sortBy = action.payload;
+      state.offers = sortOffers(action.payload,state);
     },
     setCurrentOfferIdFromParam: (state, action) => {
       state.currentOfferIdFromParam = action.payload;
+    },
+    setFavorite: (state, action) => {
+      state.offers[action.payload].isFavorite = !state.offers[action.payload].isFavorite;
     },
   },
   extraReducers(builder) {
@@ -116,6 +82,7 @@ export const dataProcess = createSlice({
       .addCase(fetchHotelsAction.fulfilled, (state, action) => {
         state.offerList = action.payload;
         state.offers = filterByCity(state.offerList,state.city.name);
+        state.offers = sortOffers(state.sortBy,state);
         state.isDataLoaded = false;
       })
       .addCase(getOffer.pending, (state) => {
@@ -128,17 +95,18 @@ export const dataProcess = createSlice({
         state.otherOffers = action.payload.otherOffers;
         state.isDataLoaded = false;
       })
-      .addCase(getOffer.rejected, (state, action) => {
+      .addCase(getOffer.rejected, (state) => {
         state.currentOfferId = state.currentOfferIdFromParam;
         state.isDataLoaded = false;
       })
       .addCase(addComment.pending, (state) => {
         state.isDataLoaded = true;
       })
-      .addCase(addComment.fulfilled, (state) => {
+      .addCase(addComment.fulfilled, (state,action) => {
+        state.comments = action.payload;
         state.isDataLoaded = false;
       });
   }
 });
 
-export const {setCity, setFirstCity, setSort,setOffers,setDataLoadedStatus,setCurrentOffer,setComments,setOtherOffers,setCurrentOfferIdFromParam} = dataProcess.actions;
+export const {setCity, setSort,setCurrentOfferIdFromParam,setFavorite} = dataProcess.actions;
