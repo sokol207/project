@@ -9,23 +9,32 @@ import {Navigate, useParams} from 'react-router-dom';
 import {addComment, getOffer} from '../../store/api-actions';
 import {CommentPostType} from '../../types/offer-card';
 import LoadingScreen from '../loading-screen/loading-screen';
+import {
+  getCity,
+  getComments,
+  getCurrentOffer,
+  getCurrentOfferId,
+  getOtherOffers
+} from '../../store/data-process/selectors';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
+import { setCurrentOfferIdFromParam } from '../../store/data-process/data-process';
 
 
 function OfferScreen(): JSX.Element {
   const {id:idCurrentOfferFromParam} = useParams();
   const dispatch = useAppDispatch();
-  const idcurrentOfferFromState = useAppSelector((state)=>state.currentOfferId);
+  const idCurrentOfferFromState = useAppSelector(getCurrentOfferId);
   useEffect(() => {
-    if (idCurrentOfferFromParam !== null && idCurrentOfferFromParam !== undefined && (idcurrentOfferFromState === null || idcurrentOfferFromState !== parseInt(idCurrentOfferFromParam, 10))){
+    if (idCurrentOfferFromParam !== null && idCurrentOfferFromParam !== undefined && (idCurrentOfferFromState === null || idCurrentOfferFromState !== parseInt(idCurrentOfferFromParam, 10))){
+      dispatch(setCurrentOfferIdFromParam(parseInt(idCurrentOfferFromParam, 10)));
       dispatch(getOffer(parseInt(idCurrentOfferFromParam, 10)));
     }
-  }, [idCurrentOfferFromParam]);
-  const {currentOffer} = useAppSelector((state)=>state);
-  const [activeOfferCard,setActiveOfferCard] = React.useState('');
-  const comments = useAppSelector((state)=>state.comments);
-  const city = useAppSelector((state)=>state.city);
-  const otherOffer = useAppSelector((state)=>state.otherOffers);
-  const authorizationStatus = useAppSelector((state)=>state.authorizationStatus);
+  }, [idCurrentOfferFromParam,dispatch,idCurrentOfferFromState]);
+  const currentOffer = useAppSelector(getCurrentOffer);
+  const comments = useAppSelector(getComments);
+  const city = useAppSelector(getCity);
+  const otherOffer = useAppSelector(getOtherOffers);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const points = pointsForMap(otherOffer);
   const [selectedPoint, setSelectedPoint] = useState<PointWithId | undefined>(
     undefined
@@ -36,7 +45,6 @@ function OfferScreen(): JSX.Element {
   );
   const onListItemHover = (idPoint: number) => {
     const currentPoint = points.find((point) => point.id === idPoint);
-
     setSelectedPoint(currentPoint);
   };
 
@@ -55,7 +63,7 @@ function OfferScreen(): JSX.Element {
     }
   };
 
-  const currentOfferIdTest = useAppSelector((state) => state.currentOfferId);
+  const currentOfferIdTest = useAppSelector(getCurrentOfferId);
   if (currentOfferIdTest === null) {
     return (
       <LoadingScreen />
@@ -212,7 +220,7 @@ function OfferScreen(): JSX.Element {
         <section className="near-places places">
           <h2 className="near-places__title">Other places in the neighbourhood</h2>
           <div className="near-places__list places__list">
-            <ListOffer typeList={TypeOfferList.COMMENT} offers={otherOffer} onListItemHover={onListItemHover} activeOfferCard={activeOfferCard} setActiveOfferCard={setActiveOfferCard}/>
+            <ListOffer typeList={TypeOfferList.COMMENT} offers={otherOffer} onListItemHover={onListItemHover}/>
           </div>
         </section>
       </div>

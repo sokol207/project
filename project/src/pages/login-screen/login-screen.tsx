@@ -1,7 +1,10 @@
 import React, {FormEvent, useRef} from 'react';
-import {useAppDispatch} from '../../hooks';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {AuthData} from '../../types/auth-data';
 import {loginAction} from '../../store/api-actions';
+import {Link} from 'react-router-dom';
+import {AppRoute} from '../../const';
+import {getCity} from '../../store/data-process/selectors';
 
 function LoginScreen(): JSX.Element {
   const loginRef = useRef<HTMLInputElement | null>(null);
@@ -22,6 +25,9 @@ function LoginScreen(): JSX.Element {
       });
     }
   };
+
+  const currentCity = useAppSelector(getCity);
+
   return (
     <div className="page page--gray page--login">
       <main className="page__main page__main--login">
@@ -42,9 +48,9 @@ function LoginScreen(): JSX.Element {
           </section>
           <section className="locations locations--login locations--current">
             <div className="locations__item">
-              <a className="locations__item-link" href="#">
-                <span>Amsterdam</span>
-              </a>
+              <Link className="locations__item-link" to={AppRoute.Main}>
+                <span>{currentCity.name}</span>
+              </Link>
             </div>
           </section>
         </div>

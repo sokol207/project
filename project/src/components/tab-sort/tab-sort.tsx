@@ -1,13 +1,13 @@
 import React from 'react';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {setSort} from '../../store/actions';
 import {SortList} from '../../const';
+import {getSortBy} from '../../store/data-process/selectors';
+import {setSort} from '../../store/data-process/data-process';
 
-
-export default function TabSort(){
+function TabSort(){
   const [isClickPopular,setIsClickPopular] = React.useState(false);
   const dispatch = useAppDispatch();
-  const curSort = useAppSelector((state)=>state.sortBy);
+  const curSort = useAppSelector(getSortBy);
   return (
     <form className="places__sorting" action="#" method="get">
       <span className="places__sorting-caption">Sort by</span>
@@ -27,3 +27,4 @@ export default function TabSort(){
     </form>
   );
 }
+export default React.memo(TabSort);

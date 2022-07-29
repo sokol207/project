@@ -7,7 +7,7 @@ type CityProps = {
 
 export default function CityName(props:CityProps){
   return (
-    <a className={props.className}>
+    <a className={props.className} href="/#">
       <span>{props.name}</span>
     </a>
   );

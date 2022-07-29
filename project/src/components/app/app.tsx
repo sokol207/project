@@ -13,9 +13,12 @@ import NotFound from '../not-found/not-found';
 import HistoryRouter from '../history-route/history-route';
 import browserHistory from '../../browser-history';
 import OfferScreen from '../../pages/offer-screen/offer-screen';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
+import {getLoadedDataStatus} from '../../store/data-process/selectors';
 
 function App(): JSX.Element {
-  const {authorizationStatus, isDataLoaded} = useAppSelector((state) => state);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const isDataLoaded = useAppSelector(getLoadedDataStatus);
 
   if (isCheckedAuth(authorizationStatus) || isDataLoaded) {
     return (
