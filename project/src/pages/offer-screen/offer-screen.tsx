@@ -1,50 +1,78 @@
-import React, {useState} from 'react';
+import React, {FormEvent, useEffect, useState} from 'react';
 import CommentList from '../../components/comment/comment-list';
 import ListOffer from '../../components/list-offer/list-offer';
-import {AppRoute, pointsForMap, starMark, TypeOfferList} from '../../const';
+import {AppRoute, AuthorizationStatus, pointsForMap, starMark, TypeOfferList} from '../../const';
 import {PointWithId} from '../../types/types';
 import Map from '../../components/map/map';
-import {useAppSelector} from '../../hooks';
-import {Navigate} from 'react-router-dom';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {Navigate, useParams} from 'react-router-dom';
+import {addComment, getOffer} from '../../store/api-actions';
+import {CommentPostType} from '../../types/offer-card';
+import LoadingScreen from '../loading-screen/loading-screen';
 
-
-function YourReview(): JSX.Element {
-  const [textYourReview, setTextYourReview] = React.useState(
-    {
-      review :''
-    }
-  );
-  return (<textarea onChange={(evt) =>{const {name, value} = evt.target; setTextYourReview({...textYourReview, [name]: value});}} value={textYourReview.review} className="reviews__textarea form__textarea" id="review" name="review" placeholder="Tell how was your stay, what you like and what can be improved"/>
-  );
-}
 
 function OfferScreen(): JSX.Element {
-  const offer = useAppSelector((state)=>state.currentOffer);
-  const [activeOfferCard,setActiveOfferCard] = React.useState('1');
+  const {id:idCurrentOfferFromParam} = useParams();
+  const dispatch = useAppDispatch();
+  const idcurrentOfferFromState = useAppSelector((state)=>state.currentOfferId);
+  useEffect(() => {
+    if (idCurrentOfferFromParam !== null && idCurrentOfferFromParam !== undefined && (idcurrentOfferFromState === null || idcurrentOfferFromState !== parseInt(idCurrentOfferFromParam, 10))){
+      dispatch(getOffer(parseInt(idCurrentOfferFromParam, 10)));
+    }
+  }, [idCurrentOfferFromParam]);
+  const {currentOffer} = useAppSelector((state)=>state);
+  const [activeOfferCard,setActiveOfferCard] = React.useState('');
   const comments = useAppSelector((state)=>state.comments);
   const city = useAppSelector((state)=>state.city);
   const otherOffer = useAppSelector((state)=>state.otherOffers);
+  const authorizationStatus = useAppSelector((state)=>state.authorizationStatus);
   const points = pointsForMap(otherOffer);
   const [selectedPoint, setSelectedPoint] = useState<PointWithId | undefined>(
     undefined
   );
-  if(offer === null)
-  {
-    return <Navigate to={AppRoute.NotFound} />;
-  }
-
-  const onListItemHover = (id: number) => {
-    const currentPoint = points.find((point) => point.id === id);
+  const [textYourReview, setTextYourReview] = React.useState('');
+  const [ratingYourReview, setRatingYourReview] = React.useState(
+    0
+  );
+  const onListItemHover = (idPoint: number) => {
+    const currentPoint = points.find((point) => point.id === idPoint);
 
     setSelectedPoint(currentPoint);
   };
+
+  const onSubmit = (comment:CommentPostType) => {
+    dispatch(addComment(comment));
+  };
+  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    if (ratingYourReview !== 0 && textYourReview !== '' && currentOffer !== null) {
+      onSubmit({
+        id:currentOffer.id,
+        comment: textYourReview,
+        rating: ratingYourReview
+      });
+    }
+  };
+
+  const currentOfferIdTest = useAppSelector((state) => state.currentOfferId);
+  if (currentOfferIdTest === null) {
+    return (
+      <LoadingScreen />
+    );
+  }
+
+  if(currentOffer === null)
+  {
+    return <Navigate to={AppRoute.NotFound}/>;
+  }
 
   return (
     <div>
       <section className="property">
         <div className="property__gallery-container container">
           <div className="property__gallery">
-            {offer.images.map((photo,id)=>
+            {currentOffer.images.map((photo,id)=>
             {
               const keyValue = `${id}-${photo}`;
               return (
@@ -57,15 +85,15 @@ function OfferScreen(): JSX.Element {
         </div>
         <div className="property__container container">
           <div className="property__wrapper">
-            {offer.isPremium &&
+            {currentOffer.isPremium &&
             <div className="property__mark">
               <span>Premium</span>
             </div>}
             <div className="property__name-wrapper">
               <h1 className="property__name">
-                {offer.title}
+                {currentOffer.title}
               </h1>
-              <button className={offer.isFavorite ? 'property__bookmark__bookmark-button--active property__bookmark-button button' : 'property__bookmark-button button'} type="button">
+              <button className={currentOffer.isFavorite ? 'property__bookmark__bookmark-button--active property__bookmark-button button' : 'property__bookmark-button button'} type="button">
                 <svg className="property__bookmark-icon" width="31" height="33">
                   <use xlinkHref="#icon-bookmark"/>
                 </svg>
@@ -74,30 +102,30 @@ function OfferScreen(): JSX.Element {
             </div>
             <div className="property__rating rating">
               <div className="property__stars rating__stars">
-                <span style={{width: starMark(offer.rating)}}/>
+                <span style={{width: starMark(currentOffer.rating)}}/>
                 <span className="visually-hidden">Rating</span>
               </div>
-              <span className="property__rating-value rating__value">{offer.rating}</span>
+              <span className="property__rating-value rating__value">{currentOffer.rating}</span>
             </div>
             <ul className="property__features">
               <li className="property__feature property__feature--entire">
-                {offer.type}
+                {currentOffer.type}
               </li>
               <li className="property__feature property__feature--bedrooms">
-                {offer.bedrooms} Bedrooms
+                {currentOffer.bedrooms} Bedrooms
               </li>
               <li className="property__feature property__feature--adults">
-                Max {offer.maxAdults} adults
+                Max {currentOffer.maxAdults} adults
               </li>
             </ul>
             <div className="property__price">
-              <b className="property__price-value">&euro;{offer.price}</b>
+              <b className="property__price-value">&euro;{currentOffer.price}</b>
               <span className="property__price-text">&nbsp;night</span>
             </div>
             <div className="property__inside">
               <h2 className="property__inside-title">What&apos;s inside</h2>
               <ul className="property__inside-list">
-                {offer.goods.map((inside,id)=>
+                {currentOffer.goods.map((inside,id)=>
                 {
                   const keyValue = `${id}-${inside}`;
                   return (
@@ -112,15 +140,15 @@ function OfferScreen(): JSX.Element {
               <h2 className="property__host-title">Meet the host</h2>
               <div className="property__host-user user">
                 <div className="property__avatar-wrapper property__avatar-wrapper--pro user__avatar-wrapper">
-                  <img className="property__avatar user__avatar" src={offer.host.avatarUrl} width="74" height="74" alt="Host avatar"/>
+                  <img className="property__avatar user__avatar" src={currentOffer.host.avatarUrl} width="74" height="74" alt="Host avatar"/>
                 </div>
                 <span className="property__user-name">
-                  {offer.host.name}
+                  {currentOffer.host.name}
                 </span>
-                {offer.host.isPro && <span className="property__user-status">Pro</span>}
+                {currentOffer.host.isPro && <span className="property__user-status">Pro</span>}
               </div>
               <div className="property__description">
-                {offer.description}
+                {currentOffer.description}
               </div>
             </div>
             <section className="property__reviews reviews">
@@ -128,49 +156,51 @@ function OfferScreen(): JSX.Element {
               <ul className="reviews__list">
                 <CommentList comments={comments}/>
               </ul>
-              <form className="reviews__form form" action="#" method="post">
+
+              {authorizationStatus === AuthorizationStatus.Auth &&
+              <form className="reviews__form form" action="" method="" onSubmit={handleSubmit}>
                 <label className="reviews__label form__label" htmlFor="review">Your review</label>
                 <div className="reviews__rating-form form__rating">
                   <input className="form__rating-input visually-hidden" name="rating" value="5" id="5-stars" type="radio"/>
-                  <label htmlFor="5-stars" className="reviews__rating-label form__rating-label" title="perfect">
+                  <label htmlFor="5-stars" onClick={() => setRatingYourReview(5)} className="reviews__rating-label form__rating-label" title="perfect">
                     <svg className="form__star-image" width="37" height="33">
                       <use xlinkHref="#icon-star"/>
                     </svg>
                   </label>
                   <input className="form__rating-input visually-hidden" name="rating" value="4" id="4-stars" type="radio"/>
-                  <label htmlFor="4-stars" className="reviews__rating-label form__rating-label" title="good">
+                  <label htmlFor="4-stars" onClick={() => setRatingYourReview(4)} className="reviews__rating-label form__rating-label" title="good">
                     <svg className="form__star-image" width="37" height="33">
                       <use xlinkHref="#icon-star"/>
                     </svg>
                   </label>
                   <input className="form__rating-input visually-hidden" name="rating" value="3" id="3-stars" type="radio"/>
-                  <label htmlFor="3-stars" className="reviews__rating-label form__rating-label" title="not bad">
+                  <label htmlFor="3-stars" onClick={() => setRatingYourReview(3)} className="reviews__rating-label form__rating-label" title="not bad">
                     <svg className="form__star-image" width="37" height="33">
                       <use xlinkHref="#icon-star"/>
                     </svg>
                   </label>
                   <input className="form__rating-input visually-hidden" name="rating" value="2" id="2-stars" type="radio"/>
-                  <label htmlFor="2-stars" className="reviews__rating-label form__rating-label" title="badly">
+                  <label htmlFor="2-stars" onClick={() => setRatingYourReview(2)} className="reviews__rating-label form__rating-label" title="badly">
                     <svg className="form__star-image" width="37" height="33">
                       <use xlinkHref="#icon-star"/>
                     </svg>
                   </label>
                   <input className="form__rating-input visually-hidden" name="rating" value="1" id="1-star" type="radio"/>
-                  <label htmlFor="1-star" className="reviews__rating-label form__rating-label" title="terribly">
+                  <label htmlFor="1-star" onClick={() => setRatingYourReview(1)} className="reviews__rating-label form__rating-label" title="terribly">
                     <svg className="form__star-image" width="37" height="33">
                       <use xlinkHref="#icon-star"/>
                     </svg>
                   </label>
                 </div>
-                {<YourReview/>}
+                <textarea onChange={(evt) => {const {value} = evt.target; setTextYourReview(value);}} value={textYourReview} className="reviews__textarea form__textarea" id="review" name="review" placeholder="Tell how was your stay, what you like and what can be improved"/>
                 <div className="reviews__button-wrapper">
                   <p className="reviews__help">
                     To submit review please make sure to set <span className="reviews__star">rating</span> and describe
                     your stay with at least <b className="reviews__text-amount">50 characters</b>.
                   </p>
-                  <button className="reviews__submit form__submit button" type="submit" disabled>Submit</button>
+                  <button className="reviews__submit form__submit button" type="submit">Submit</button>
                 </div>
-              </form>
+              </form>}
             </section>
           </div>
         </div>

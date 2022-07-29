@@ -1,4 +1,4 @@
-import {CommentsType, OfferCard, OfferListForPage} from '../types/ofer-card';
+import {CommentsType, OfferCard, OfferListForPage} from '../types/offer-card';
 import {CityList} from '../const';
 
 export const offerCard : OfferCard[] = [

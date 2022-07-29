@@ -2,13 +2,10 @@ import React, {FormEvent, useRef} from 'react';
 import {useAppDispatch} from '../../hooks';
 import {AuthData} from '../../types/auth-data';
 import {loginAction} from '../../store/api-actions';
-import {useNavigate} from 'react-router-dom';
-import {AppRoute} from '../../const';
 
 function LoginScreen(): JSX.Element {
   const loginRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const onSubmit = (authData: AuthData) => {
@@ -40,7 +37,7 @@ function LoginScreen(): JSX.Element {
                 <label className="visually-hidden">Password</label>
                 <input className="login__input form__input" type="password" name="password" placeholder="Password" required ref={passwordRef}/>
               </div>
-              <button className="login__submit form__submit button" type="submit" onClick={() => navigate(AppRoute.Main)}>Sign in</button>
+              <button className="login__submit form__submit button" type="submit">Sign in</button>
             </form>
           </section>
           <section className="locations locations--login locations--current">
