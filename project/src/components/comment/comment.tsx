@@ -1,5 +1,5 @@
 import React from 'react';
-import {CommentType} from '../../types/ofer-card';
+import {CommentType} from '../../types/offer-card';
 import {starMark} from '../../const';
 
 type CommentProps = {

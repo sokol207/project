@@ -9,7 +9,7 @@ import {
   setOffers,
   setSort
 } from './actions';
-import {CommentsType, OfferCard, OfferList} from '../types/ofer-card';
+import {CommentsType, OfferCard, OfferList} from '../types/offer-card';
 import {State} from '../types/store';
 import {City} from '../types/types';
 

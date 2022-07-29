@@ -1,6 +1,6 @@
 import Offer from './offer';
 import React from 'react';
-import {OfferToList} from '../../types/ofer-card';
+import {OfferToList} from '../../types/offer-card';
 
 export default function OfferFavorite (props:OfferToList) {
   return (

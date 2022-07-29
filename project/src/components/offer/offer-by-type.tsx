@@ -1,4 +1,4 @@
-import {OfferCard} from '../../types/ofer-card';
+import {OfferCard} from '../../types/offer-card';
 import React from 'react';
 import {TypeOfferList} from '../../const';
 import OfferComment from './offer-comment';
