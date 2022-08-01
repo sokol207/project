@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import CommentList from '../../components/comment/comment-list';
 import ListOffer from '../../components/list-offer/list-offer';
-import {pointsForMap, starMark, TypeOfferList} from '../../const';
+import {AppRoute, pointsForMap, starMark, TypeOfferList} from '../../const';
 import {PointWithId} from '../../types/types';
 import Map from '../../components/map/map';
 import {useAppSelector} from '../../hooks';
+import {Navigate} from 'react-router-dom';
 
 
 function YourReview(): JSX.Element {
@@ -29,7 +30,7 @@ function OfferScreen(): JSX.Element {
   );
   if(offer === null)
   {
-    return <>Not Found</>;
+    return <Navigate to={AppRoute.NotFound} />;
   }
 
   const onListItemHover = (id: number) => {

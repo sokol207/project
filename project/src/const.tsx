@@ -1,11 +1,12 @@
 import {City, PointsWithId, PointWithId} from './types/types';
-import {OfferCard} from './types/ofer-card';
+import {OfferCard} from './types/offer-card';
 
 export enum AppRoute{
   Login='/login',
   Offer='/offer/:id',
   Favorites='/favorites',
-  Main='/'
+  Main='/',
+  NotFound='/notFound'
 }
 
 export enum AuthorizationStatus{

@@ -1,4 +1,4 @@
-import {OfferCard} from '../../types/ofer-card';
+import {OfferCard} from '../../types/offer-card';
 import {Link} from 'react-router-dom';
 import React from 'react';
 import {starMark} from '../../const';
