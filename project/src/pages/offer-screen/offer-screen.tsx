@@ -1,18 +1,11 @@
 import React, {useState} from 'react';
-import {Offer} from '../../types/Offer';
-import CommentList from '../../components/commentList/commentList';
-import ListOffer from '../../components/listOffer/listOffer';
-import {TypeOfferList} from '../../const';
-import {OfferCard} from '../../types/OfferCard';
-import {City, Points, PointWithTitle} from '../../types/types';
+import CommentList from '../../components/comment/comment-list';
+import ListOffer from '../../components/list-offer/list-offer';
+import {pointsForMap, starMark, TypeOfferList} from '../../const';
+import {PointWithId} from '../../types/types';
 import Map from '../../components/map/map';
+import {useAppSelector} from '../../hooks';
 
-type OfferScreenProps = {
-  offer: Offer;
-  otherOffer: OfferCard[];
-  city: City;
-  points: Points;
-}
 
 function YourReview(): JSX.Element {
   const [textYourReview, setTextYourReview] = React.useState(
@@ -24,28 +17,33 @@ function YourReview(): JSX.Element {
   );
 }
 
-function OfferScreen({offer,otherOffer, city, points}:OfferScreenProps): JSX.Element {
+function OfferScreen(): JSX.Element {
+  const offer = useAppSelector((state)=>state.currentOffer);
   const [activeOfferCard,setActiveOfferCard] = React.useState('1');
-  const [selectedPoint, setSelectedPoint] = useState<PointWithTitle | undefined>(
+  const comments = useAppSelector((state)=>state.comments);
+  const city = useAppSelector((state)=>state.city);
+  const otherOffer = useAppSelector((state)=>state.otherOffers);
+  const points = pointsForMap(otherOffer);
+  const [selectedPoint, setSelectedPoint] = useState<PointWithId | undefined>(
     undefined
   );
+  if(offer === null)
+  {
+    return <>Not Found</>;
+  }
 
-  const onListItemHover = (listItemName: string) => {
-    const currentPoint = points.find((point) => point.title === listItemName);
+  const onListItemHover = (id: number) => {
+    const currentPoint = points.find((point) => point.id === id);
 
     setSelectedPoint(currentPoint);
   };
-  function starMark(mark:number): string{
-    const markStarValue = ((mark / 5) * 100);
-    return `${markStarValue}%`;
-  }
 
   return (
     <div>
       <section className="property">
         <div className="property__gallery-container container">
           <div className="property__gallery">
-            {offer.photoOffer.map((photo,id)=>
+            {offer.images.map((photo,id)=>
             {
               const keyValue = `${id}-${photo}`;
               return (
@@ -58,14 +56,15 @@ function OfferScreen({offer,otherOffer, city, points}:OfferScreenProps): JSX.Ele
         </div>
         <div className="property__container container">
           <div className="property__wrapper">
+            {offer.isPremium &&
             <div className="property__mark">
               <span>Premium</span>
-            </div>
+            </div>}
             <div className="property__name-wrapper">
               <h1 className="property__name">
-                {offer.name}
+                {offer.title}
               </h1>
-              <button className="property__bookmark-button button" type="button">
+              <button className={offer.isFavorite ? 'property__bookmark__bookmark-button--active property__bookmark-button button' : 'property__bookmark-button button'} type="button">
                 <svg className="property__bookmark-icon" width="31" height="33">
                   <use xlinkHref="#icon-bookmark"/>
                 </svg>
@@ -74,30 +73,30 @@ function OfferScreen({offer,otherOffer, city, points}:OfferScreenProps): JSX.Ele
             </div>
             <div className="property__rating rating">
               <div className="property__stars rating__stars">
-                <span style={{width: starMark(offer.mark)}}/>
+                <span style={{width: starMark(offer.rating)}}/>
                 <span className="visually-hidden">Rating</span>
               </div>
-              <span className="property__rating-value rating__value">{offer.mark}</span>
+              <span className="property__rating-value rating__value">{offer.rating}</span>
             </div>
             <ul className="property__features">
               <li className="property__feature property__feature--entire">
-                Apartment
+                {offer.type}
               </li>
               <li className="property__feature property__feature--bedrooms">
-                3 Bedrooms
+                {offer.bedrooms} Bedrooms
               </li>
               <li className="property__feature property__feature--adults">
-                Max 4 adults
+                Max {offer.maxAdults} adults
               </li>
             </ul>
             <div className="property__price">
-              <b className="property__price-value">&euro;120</b>
+              <b className="property__price-value">&euro;{offer.price}</b>
               <span className="property__price-text">&nbsp;night</span>
             </div>
             <div className="property__inside">
               <h2 className="property__inside-title">What&apos;s inside</h2>
               <ul className="property__inside-list">
-                {offer.insides.map((inside,id)=>
+                {offer.goods.map((inside,id)=>
                 {
                   const keyValue = `${id}-${inside}`;
                   return (
@@ -112,21 +111,21 @@ function OfferScreen({offer,otherOffer, city, points}:OfferScreenProps): JSX.Ele
               <h2 className="property__host-title">Meet the host</h2>
               <div className="property__host-user user">
                 <div className="property__avatar-wrapper property__avatar-wrapper--pro user__avatar-wrapper">
-                  <img className="property__avatar user__avatar" src={offer.host.image} width="74" height="74" alt="Host avatar"/>
+                  <img className="property__avatar user__avatar" src={offer.host.avatarUrl} width="74" height="74" alt="Host avatar"/>
                 </div>
                 <span className="property__user-name">
                   {offer.host.name}
                 </span>
-                <span className="property__user-status">{offer.host.userStatus}</span>
+                {offer.host.isPro && <span className="property__user-status">Pro</span>}
               </div>
               <div className="property__description">
-                {offer.host.text}
+                {offer.description}
               </div>
             </div>
             <section className="property__reviews reviews">
-              <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{offer.comments.length}</span></h2>
+              <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{comments.length}</span></h2>
               <ul className="reviews__list">
-                <CommentList comments={offer.comments}/>
+                <CommentList comments={comments}/>
               </ul>
               <form className="reviews__form form" action="#" method="post">
                 <label className="reviews__label form__label" htmlFor="review">Your review</label>

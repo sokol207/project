@@ -1,4 +1,5 @@
-import {City} from './types/types';
+import {City, PointsWithId, PointWithId} from './types/types';
+import {OfferCard} from './types/ofer-card';
 
 export enum AppRoute{
   Login='/login',
@@ -10,7 +11,7 @@ export enum AppRoute{
 export enum AuthorizationStatus{
   Auth='AUTH',
   NoAuth='NO_AUTH',
-  Unknow = 'UNKNOW'
+  Unknown = 'UNKNOW'
 }
 
 export const URL_MARKER_DEFAULT =
@@ -21,57 +22,58 @@ export const URL_MARKER_CURRENT =
 
 export const TypeOfferList = {
   CITY:'city',
-  COMMENT:'comment'
+  COMMENT:'comment',
+  FAVORITE:'favorite'
 };
 
 export const CityList : City[] = [
   {
     name: 'Paris',
-    point: {
-      lat: 48.7,
-      lng: 2.2,
-    },
-    zoom: 10
+    location: {
+      latitude: 48.85661,
+      longitude: 2.351499,
+      zoom: 13
+    }
   },
   {
     name: 'Cologne',
-    point: {
-      lat: 50.9,
-      lng: 6.9728,
-    },
-    zoom: 12
+    location: {
+      latitude: 50.938361,
+      longitude: 6.959974,
+      zoom: 13
+    }
   },
   {
     name: 'Brussels',
-    point: {
-      lat: 50.50,
-      lng: 4.21,
-    },
-    zoom: 10
+    location: {
+      latitude: 50.846557,
+      longitude: 4.351697,
+      zoom: 13
+    }
   },
   {
     name: 'Amsterdam',
-    point: {
-      lat: 52.3909553943508,
-      lng: 4.85309666406198,
-    },
-    zoom: 10
+    location: {
+      latitude: 52.37454,
+      longitude: 4.897976,
+      zoom: 13
+    }
   },
   {
     name: 'Hamburg',
-    point: {
-      lat: 53.33,
-      lng: 10.0,
-    },
-    zoom: 10
+    location: {
+      latitude: 53.550341,
+      longitude: 10.0006540,
+      zoom: 13
+    }
   },
   {
     name: 'Dusseldorf',
-    point: {
-      lat: 51.13,
-      lng: 6.46,
-    },
-    zoom: 10
+    location: {
+      latitude: 51.225402,
+      longitude: 6.776314,
+      zoom: 13
+    }
   }
 ];
 
@@ -82,3 +84,30 @@ export const SortList = [
   'Top rated first'
 ];
 
+export function pointForMap(offer:OfferCard) : PointWithId{
+  return {id:offer.id,point:offer.location};
+}
+
+export function pointsForMap(offers: OfferCard[]) : PointsWithId{
+  if(offers.length > 0) {
+    return offers.map(pointForMap);
+  }else {
+    return [];
+  }
+}
+
+export function starMark(mark:number) : string{
+  const markStarValue = ((mark / 5) * 100);
+  return `${markStarValue}%`;
+}
+
+export enum APIRoute {
+  Hotels = '/hotels',
+  Login = '/login',
+  Logout = '/logout',
+}
+
+export const TIMEOUT_SHOW_ERROR = 2000;
+
+export const isCheckedAuth = (authorizationStatus: string): boolean =>
+  authorizationStatus === AuthorizationStatus.Unknown;

@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/app/app';
-import {offers} from './mocks/offers';
-import { offerCardForOtherPlaces, offerList} from './mocks/offerList';
-import {POINTS_OTHER_OFFERS} from './mocks/points';
-import {CITY} from './mocks/city';
 import {Provider} from 'react-redux';
 import {store} from './store';
+import ErrorMessage from './components/error-message/error-message';
+import {checkAuthAction, fetchHotelsAction} from './store/api-actions';
 
+store.dispatch(fetchHotelsAction());
+store.dispatch(checkAuthAction());
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -15,6 +15,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <Provider store={store}>
-    <App offers={offers} offerListForPage={offerList} otherOffer={offerCardForOtherPlaces} pointsOtherOffers={POINTS_OTHER_OFFERS} city={CITY}/>
+    <ErrorMessage />
+    <App/>
   </Provider>
 );

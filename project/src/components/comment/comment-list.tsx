@@ -1,9 +1,9 @@
 import React from 'react';
-import {CommentType} from '../../types/Offer';
-import Comment from '../comment/comment';
+import Comment from './comment';
+import {CommentsType} from '../../types/ofer-card';
 
 type CommentListProps = {
-  comments: CommentType[];
+  comments: CommentsType;
 };
 
 

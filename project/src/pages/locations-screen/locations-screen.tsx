@@ -1,38 +1,22 @@
 import React, {useState} from 'react';
 import Map from '../../components/map/map';
-import {Points, PointWithTitle} from '../../types/types';
-import ListOffer from '../../components/listOffer/listOffer';
-import {TypeOfferList} from '../../const';
-import CityListComponent from '../../components/cityList/cityList';
+import {PointWithId} from '../../types/types';
+import ListOffer from '../../components/list-offer/list-offer';
+import {TypeOfferList, CityList, pointsForMap} from '../../const';
+import CityListComponent from '../../components/city-list/city-list';
 import {useAppSelector} from '../../hooks';
-import {CityList} from '../../const';
-import {OfferCard} from '../../types/OfferCard';
-import TabSort from '../../components/tabSort/tabSort';
-
-
-function pointForMap(offer:OfferCard): PointWithTitle {
-  return {title:offer.name,point:offer.point};
-}
-
-function pointsForMap(OfferFromCurrentCity: OfferCard[]):Points
-{
-  if(OfferFromCurrentCity.length > 0) {
-    return OfferFromCurrentCity.map(pointForMap);
-  }else {
-    return [];
-  }
-}
+import TabSort from '../../components/tab-sort/tab-sort';
 
 function LocationsScreen(): JSX.Element {
   const [activeOfferCard,setActiveOfferCard] = React.useState('1');
-  const [selectedPoint, setSelectedPoint] = useState<PointWithTitle | undefined>(
+  const [selectedPoint, setSelectedPoint] = useState<PointWithId | undefined>(
     undefined
   );
   const offerFromCurrentCity = useAppSelector((state)=>state.offers);
   const currentCity = useAppSelector((state)=>state.city);
   const points = pointsForMap(offerFromCurrentCity);
-  const onListItemHover = (listItemName: string) => {
-    const currentPoint = points.find((point) => point.title === listItemName);
+  const onListItemHover = (id: number) => {
+    const currentPoint = points.find((point) => point.id === id);
     setSelectedPoint(currentPoint);
   };
 
