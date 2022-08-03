@@ -2,16 +2,16 @@ import {AuthorizationStatus, CityList, SortList} from '../const';
 import {createReducer} from '@reduxjs/toolkit';
 import {
   requireAuthorization,
-  setCity,
+  setCity, setComments, setCurrentOffer, setCurrentOfferId,
   setDataLoadedStatus,
-  setError,
   setFirstCity,
-  setOffers,
+  setOffers, setOtherOffers,
   setSort
 } from './actions';
 import {CommentsType, OfferCard, OfferList} from '../types/offer-card';
 import {State} from '../types/store';
 import {City} from '../types/types';
+import {UserData} from '../types/user-data';
 
 function getOfferFavoriteList(state:State): OfferList[] {
   const offerListByRegion:OfferList[] = [];
@@ -32,12 +32,14 @@ type initialStateType = {
   offerList: OfferCard[];
   sortBy: string;
   favoriteOffers: OfferList[];
+  currentOfferId: number|null;
   currentOffer: OfferCard | null;
   comments: CommentsType;
   otherOffers: OfferCard[];
   authorizationStatus: string;
   error: string | null;
   isDataLoaded: boolean;
+  user: UserData | null;
 }
 
 const initialState : initialStateType = {
@@ -46,12 +48,14 @@ const initialState : initialStateType = {
   offerList: [],
   sortBy: SortList[0],
   favoriteOffers: [],
+  currentOfferId: null,
   currentOffer: null,
   comments: [],
   otherOffers: [],
   authorizationStatus: AuthorizationStatus.Unknown,
   error: null,
-  isDataLoaded: false
+  isDataLoaded: false,
+  user: null
 };
 
 function sortByLowPrice(a:OfferCard,b:OfferCard)
@@ -112,10 +116,20 @@ export const reducer = createReducer(initialState, (builder) => {
     }).addCase(requireAuthorization, (state, action) => {
       state.authorizationStatus = action.payload;
     })
-    .addCase(setError, (state, action) => {
-      state.error = action.payload;
-    })
     .addCase(setDataLoadedStatus, (state, action) => {
       state.isDataLoaded = action.payload;
+    })
+    .addCase(setCurrentOffer, (state, action) => {
+      state.currentOffer = action.payload;
+      state.currentOfferId = state.currentOffer === null ? null : state.currentOffer.id;
+    })
+    .addCase(setComments, (state, action) => {
+      state.comments = action.payload;
+    })
+    .addCase(setOtherOffers, (state, action) => {
+      state.otherOffers = action.payload;
+    })
+    .addCase(setCurrentOfferId, (state, action) => {
+      state.currentOfferId = action.payload;
     });
 });

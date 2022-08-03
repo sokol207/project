@@ -17,8 +17,9 @@ export type OfferProps = {
 }
 
 function Offer({offer,activeOfferCard,setActiveOfferCard,articleClassName,citiesImageClassName,divClassName,image}:OfferProps): JSX.Element{
+
   return (
-    <article className={`${articleClassName} place-card`} onMouseOver={()=>{setActiveOfferCard(`/offer/${offer.id}`);}}>
+    <article className={`${articleClassName} place-card`} onMouseOver={()=>{setActiveOfferCard(`/offer/${offer.id}`);}} >
       {
         offer.isPremium &&
         <div className="place-card__mark">

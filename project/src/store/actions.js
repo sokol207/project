@@ -16,8 +16,14 @@ export const setOffers = createAction('setOffers',setValue);
 
 export const requireAuthorization = createAction('requireAuthorization',setValue);
 
-export const setError = createAction('game/setError',setValue);
-
 export const setDataLoadedStatus = createAction('data/setDataLoadedStatus',setValue);
 
+export const setCurrentOffer = createAction('data/setCurrentOffer',setValue);
 
+export const setComments = createAction('data/setComments',setValue);
+
+export const setOtherOffers = createAction('data/setOtherOffers',setValue);
+
+export const redirectToRoute = createAction('hotels/redirectToRoute',setValue);
+
+export const setCurrentOfferId = createAction('hotels/setCurrentOfferId',setValue);
