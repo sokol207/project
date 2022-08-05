@@ -6,8 +6,6 @@ type ListOfferProps = {
   typeList: string;
   offers: OfferCard[];
   onListItemHover: ((id: number) => void) | undefined;
-  activeOfferCard:string;
-  setActiveOfferCard: React.Dispatch<React.SetStateAction<string>>;
 };
 
 
@@ -32,13 +30,13 @@ function ListOffer(props: ListOfferProps): JSX.Element {
               }}
               style={{listStyleType: 'none'}}
             >
-              <OfferByType offerType={props.typeList} offer={offer} activeOfferCard={props.activeOfferCard} setActiveOfferCard={props.setActiveOfferCard}/>
+              <OfferByType offerType={props.typeList} offer={offer}/>
             </li>
           );
         }
         return (
           <li key={keyValueOffer}>
-            <OfferByType offerType={props.typeList} offer={offer} activeOfferCard={props.activeOfferCard} setActiveOfferCard={props.setActiveOfferCard}/>
+            <OfferByType offerType={props.typeList} offer={offer}/>
           </li>);
       })}
     </>

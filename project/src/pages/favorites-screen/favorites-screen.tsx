@@ -3,11 +3,11 @@ import {Link} from 'react-router-dom';
 import {TypeOfferList} from '../../const';
 import ListOffer from '../../components/list-offer/list-offer';
 import {useAppSelector} from '../../hooks';
+import {getFavoriteOffers} from '../../store/data-process/selectors';
 
 
 function FavoritesScreen(): JSX.Element {
-  const [activeOfferCard,setActiveOfferCard] = React.useState('');
-  const favoriteOffers = useAppSelector((state)=>state.favoriteOffers);
+  const favoriteOffers = useAppSelector(getFavoriteOffers);
   return (
     <div className="page">
       <main className="page__main page__main--favorites">
@@ -27,7 +27,7 @@ function FavoritesScreen(): JSX.Element {
                       </div>
                     </div>
                     <div className="favorites__places">
-                      <ListOffer typeList={TypeOfferList.FAVORITE} onListItemHover={undefined} offers={offerList.offers} activeOfferCard={activeOfferCard} setActiveOfferCard={setActiveOfferCard}/>
+                      <ListOffer typeList={TypeOfferList.FAVORITE} onListItemHover={undefined} offers={offerList.offers}/>
                     </div>
                   </li>
                 );

@@ -5,8 +5,6 @@ import {starMark} from '../../const';
 
 export type OfferProps = {
   offer: OfferCard;
-  activeOfferCard:string;
-  setActiveOfferCard: React.Dispatch<React.SetStateAction<string>>;
   articleClassName:string;
   divClassName:string;
   citiesImageClassName:string;
@@ -16,10 +14,10 @@ export type OfferProps = {
   }
 }
 
-function Offer({offer,activeOfferCard,setActiveOfferCard,articleClassName,citiesImageClassName,divClassName,image}:OfferProps): JSX.Element{
+function Offer({offer,articleClassName,citiesImageClassName,divClassName,image}:OfferProps): JSX.Element{
 
   return (
-    <article className={`${articleClassName} place-card`} onMouseOver={()=>{setActiveOfferCard(`/offer/${offer.id}`);}} >
+    <article className={`${articleClassName} place-card`}>
       {
         offer.isPremium &&
         <div className="place-card__mark">
@@ -27,7 +25,7 @@ function Offer({offer,activeOfferCard,setActiveOfferCard,articleClassName,cities
         </div>
       }
       <div className={`${citiesImageClassName}  place-card__image-wrapper`}>
-        <Link to={activeOfferCard}>
+        <Link to={`/offer/${offer.id}`}>
           <img className="place-card__image" src={offer.previewImage} width={image.width} height={image.high} alt={''}/>
         </Link>
       </div>

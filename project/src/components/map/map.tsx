@@ -51,7 +51,7 @@ function Map(props: MapProps): JSX.Element {
           .addTo(map);
       });
     }
-  }, [map, points, selectedPoint]);
+  }, [map, points, selectedPoint, city]);
 
   return <div style={{height: props.height, width: props.width, marginLeft: props.marginLeft, marginRight: props.marginRight}} ref={mapRef}/>;
 }

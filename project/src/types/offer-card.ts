@@ -1,5 +1,4 @@
 import {City, Point} from './types';
-import React from 'react';
 
 export type OfferCard = {
   bedrooms: number;
@@ -36,8 +35,6 @@ export type OfferListForPage = OfferList[];
 
 export type OfferToList = {
   offer: OfferCard;
-  activeOfferCard: string;
-  setActiveOfferCard: React.Dispatch<React.SetStateAction<string>>
 };
 
 export type CommentType = {
@@ -60,3 +57,10 @@ export type CommentPostType = {
   comment: string;
   rating: number;
 };
+
+export type OfferScreenDataType = {
+  currentOfferId: number|null;
+  currentOffer: OfferCard | null;
+  comments: CommentsType;
+  otherOffers: OfferCard[];
+}
