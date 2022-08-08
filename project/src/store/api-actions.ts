@@ -7,6 +7,7 @@ import {AuthData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
 import {CommentPostType, CommentsType, OfferCard, OfferCardList, OfferScreenDataType} from '../types/offer-card';
 import {redirectToRoute} from './actions';
+import {DataForPostFavorites} from '../types/types';
 
 export const fetchHotelsAction = createAsyncThunk<OfferCardList, undefined, {
   dispatch: AppDispatch,
@@ -20,27 +21,33 @@ export const fetchHotelsAction = createAsyncThunk<OfferCardList, undefined, {
   },
 );
 
-export const checkAuthAction = createAsyncThunk<void, undefined, {
+export const checkAuthAction = createAsyncThunk<UserData, undefined, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
 }>(
   'user/checkAuth',
   async (_arg, {dispatch, extra: api}) => {
-    await api.get(APIRoute.Login);
+    const {data: userData} = await api.get<UserData>(APIRoute.Login);
+    dispatch(fetchFavoritesAction());
+    dispatch(fetchHotelsAction());
+    return userData;
   },
 );
 
-export const loginAction = createAsyncThunk<void, AuthData, {
+export const loginAction = createAsyncThunk<UserData, AuthData, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
 }>(
   'user/login',
   async ({email, password}, {dispatch, extra: api}) => {
-    const {data: {token}} = await api.post<UserData>(APIRoute.Login, {email, password});
-    saveToken(token);
+    const {data: userData} = await api.post<UserData>(APIRoute.Login, {email, password});
+    saveToken(userData.token);
+    dispatch(fetchFavoritesAction());
     dispatch(redirectToRoute(AppRoute.Main));
+    dispatch(fetchHotelsAction());
+    return userData;
   },
 );
 
@@ -63,8 +70,12 @@ export const addComment = createAsyncThunk<CommentsType, CommentPostType, {
 }>(
   'data/comment/post',
   async ({id, comment, rating}, {dispatch, extra: api}) => {
-    const {data} = await api.post<CommentsType>(`${APIRoute.Comments}/${id}`, {comment,rating});
-    return data;
+    const {data:dataComments} = await api.post<CommentsType>(`${APIRoute.Comments}/${id}`, {comment,rating});
+    const arrayComments = [];
+    for (let i = 0; i < 10 && i < dataComments.length; i++){
+      arrayComments.push(dataComments[i]);
+    }
+    return arrayComments;
   },
 );
 
@@ -75,7 +86,11 @@ const loadDataOffer = async (dispatch: AppDispatch, api: AxiosInstance, id:numbe
 
 const loadDataComments = async (dispatch: AppDispatch, api: AxiosInstance, id:number) => {
   const {data: dataComments} = await api.get<CommentsType>(`${APIRoute.Comments}/${id}`);
-  return dataComments;
+  const arrayComments = [];
+  for (let i = 0; i < 10 && i < dataComments.length; i++){
+    arrayComments.push(dataComments[i]);
+  }
+  return arrayComments;
 };
 
 const loadDataOtherOffer = async (dispatch: AppDispatch, api: AxiosInstance, id:number) => {
@@ -96,5 +111,36 @@ export const getOffer = createAsyncThunk<OfferScreenDataType, number, {
     const dataOtherOfferProm = loadDataOtherOffer(dispatch, api, id);
     const [dataOffer,dataComments,dataOtherOffer] = await Promise.all([dataOfferProm,dataCommentsProm,dataOtherOfferProm]);
     return {currentOfferId:id,currentOffer:dataOffer,comments:dataComments,otherOffers:dataOtherOffer};
+  },
+);
+
+export const fetchFavoritesAction = createAsyncThunk<OfferCardList, undefined, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}>(
+  'data/favorites',
+  async (_arg, {dispatch, extra: api}) => {
+    const {data} = await api.get<OfferCardList>(APIRoute.Favorites);
+    return data;
+  },
+);
+
+export const postFavoriteAction = createAsyncThunk<void, DataForPostFavorites, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}>(
+  'data/favorites/post',
+  async (dataForFavorites, {dispatch, extra: api}) => {
+    api.post<OfferCardList>(`${APIRoute.Favorites}/${dataForFavorites.hotelId}/${dataForFavorites.status}`).then(()=>{
+      dispatch(fetchFavoritesAction());
+      if (dataForFavorites.typeReloaded === 'main'){
+        dispatch(fetchHotelsAction());
+      }
+      if (dataForFavorites.typeReloaded === 'comment'){
+        dispatch(getOffer(dataForFavorites.hotelId));
+      }
+    });
   },
 );

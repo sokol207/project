@@ -9,7 +9,6 @@ export type HotelsData = {
   offers: OfferCard[];
   offerList: OfferCard[];
   sortBy: string;
-  favoriteOffers: OfferList[];
   currentOfferId: number|null;
   currentOfferIdFromParam: number|null;
   currentOffer: OfferCard | null;
@@ -22,6 +21,8 @@ export type HotelsData = {
 export type UserProcess = {
   authorizationStatus: AuthorizationStatus;
   user: UserData | null;
+  favoriteOffers: OfferList[];
+  countFavoriteOffers:number;
 };
 
 export type State = ReturnType<typeof store.getState>;

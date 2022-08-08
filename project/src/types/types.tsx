@@ -15,3 +15,9 @@ export type PointWithId = {
 };
 
 export type PointsWithId = PointWithId[];
+
+export type DataForPostFavorites = {
+  hotelId: number;
+  status: number;
+  typeReloaded: string;
+}

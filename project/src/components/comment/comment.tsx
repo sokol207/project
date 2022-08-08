@@ -7,6 +7,7 @@ type CommentProps = {
 };
 
 function Comment({comment}:CommentProps) {
+  const date = new Date(comment.date);
   return (
     <>
       <div className="reviews__user user">
@@ -25,7 +26,7 @@ function Comment({comment}:CommentProps) {
         <p className="reviews__text">
           {comment.comment}
         </p>
-        <time className="reviews__time" dateTime="2022-06-13">{comment.date}</time>
+        <time className="reviews__time" dateTime="2022-06-13">{ date.toLocaleString('en-us', { month: 'long', year: 'numeric'})}</time>
       </div>
     </>);
 }

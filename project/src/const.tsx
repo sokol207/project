@@ -98,7 +98,7 @@ export function pointsForMap(offers: OfferCard[]) : PointsWithId{
 }
 
 export function starMark(mark:number) : string{
-  const markStarValue = ((mark / 5) * 100);
+  const markStarValue = ((Math.round(mark) / 5) * 100);
   return `${markStarValue}%`;
 }
 
@@ -107,6 +107,7 @@ export enum APIRoute {
   Login = '/login',
   Logout = '/logout',
   Comments = '/comments',
+  Favorites = '/favorite'
 }
 
 export const TIMEOUT_SHOW_ERROR = 2000;

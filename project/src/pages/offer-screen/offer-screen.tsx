@@ -1,12 +1,11 @@
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {FormEvent, useEffect} from 'react';
 import CommentList from '../../components/comment/comment-list';
 import ListOffer from '../../components/list-offer/list-offer';
 import {AppRoute, AuthorizationStatus, pointsForMap, starMark, TypeOfferList} from '../../const';
-import {PointWithId} from '../../types/types';
 import Map from '../../components/map/map';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {Navigate, useParams} from 'react-router-dom';
-import {addComment, getOffer} from '../../store/api-actions';
+import {addComment, getOffer, postFavoriteAction} from '../../store/api-actions';
 import {CommentPostType} from '../../types/offer-card';
 import LoadingScreen from '../loading-screen/loading-screen';
 import {
@@ -36,25 +35,24 @@ function OfferScreen(): JSX.Element {
   const otherOffer = useAppSelector(getOtherOffers);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const points = pointsForMap(otherOffer);
-  const [selectedPoint, setSelectedPoint] = useState<PointWithId | undefined>(
-    undefined
-  );
+  if (currentOffer !== null) {
+    points.push({id: currentOffer.id, point: currentOffer.location});
+  }
+
   const [textYourReview, setTextYourReview] = React.useState('');
   const [ratingYourReview, setRatingYourReview] = React.useState(
     0
   );
-  const onListItemHover = (idPoint: number) => {
-    const currentPoint = points.find((point) => point.id === idPoint);
-    setSelectedPoint(currentPoint);
+  const HandleClick = (id:number,isFavorite: boolean) => {
+    dispatch(postFavoriteAction({hotelId: id,status: isFavorite ? 1 : 0, typeReloaded: 'comment'}));
   };
-
   const onSubmit = (comment:CommentPostType) => {
     dispatch(addComment(comment));
   };
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (ratingYourReview !== 0 && textYourReview !== '' && currentOffer !== null) {
+    if (ratingYourReview !== 0 && textYourReview !== '' && currentOffer !== null && textYourReview.length >= 50 && textYourReview.length <= 300) {
       onSubmit({
         id:currentOffer.id,
         comment: textYourReview,
@@ -101,7 +99,7 @@ function OfferScreen(): JSX.Element {
               <h1 className="property__name">
                 {currentOffer.title}
               </h1>
-              <button className={currentOffer.isFavorite ? 'property__bookmark__bookmark-button--active property__bookmark-button button' : 'property__bookmark-button button'} type="button">
+              <button className={currentOffer.isFavorite ? 'property__bookmark-button property__bookmark-button--active button' : 'property__bookmark-button button'} type="button" onClick={() => HandleClick(currentOffer.id,!currentOffer.isFavorite)}>
                 <svg className="property__bookmark-icon" width="31" height="33">
                   <use xlinkHref="#icon-bookmark"/>
                 </svg>
@@ -213,14 +211,14 @@ function OfferScreen(): JSX.Element {
           </div>
         </div>
         <section className="property__map map">
-          <Map city={city} points={points} selectedPoint={selectedPoint} height={'600px'} width={'1200px'} marginLeft={'auto'} marginRight={'auto'}/>
+          <Map city={city} points={points} selectedPoint={undefined} height={'600px'} width={'1200px'} marginLeft={'auto'} marginRight={'auto'}/>
         </section>
       </section>
       <div className="container">
         <section className="near-places places">
           <h2 className="near-places__title">Other places in the neighbourhood</h2>
           <div className="near-places__list places__list">
-            <ListOffer typeList={TypeOfferList.COMMENT} offers={otherOffer} onListItemHover={onListItemHover}/>
+            <ListOffer typeList={TypeOfferList.COMMENT} offers={otherOffer} onListItemHover={undefined}/>
           </div>
         </section>
       </div>
