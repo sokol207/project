@@ -1,9 +1,10 @@
 import {OfferCard} from '../../types/offer-card';
 import {Link} from 'react-router-dom';
 import React from 'react';
-import {starMark} from '../../const';
-import {useAppDispatch} from '../../hooks';
+import {AuthorizationStatus, starMark} from '../../const';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {postFavoriteAction} from '../../store/api-actions';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
 
 export type OfferProps = {
   offer: OfferCard;
@@ -19,13 +20,20 @@ export type OfferProps = {
 function Offer({offer,articleClassName,citiesImageClassName,divClassName,image}:OfferProps): JSX.Element{
 
   const dispatch = useAppDispatch();
+  const userStatus = useAppSelector(getAuthorizationStatus);
   const HandleClick = (id:number,isFavorite: boolean) => {
-    let offerType = '';
-    switch (articleClassName) {
-      case 'cities__card' : offerType = 'main'; break;
-      case 'near-places__card' : offerType = 'comment'; break;
+    if (userStatus === AuthorizationStatus.Auth) {
+      let offerType = '';
+      switch (articleClassName) {
+        case 'cities__card' :
+          offerType = 'main';
+          break;
+        case 'near-places__card' :
+          offerType = 'comment';
+          break;
+      }
+      dispatch(postFavoriteAction({hotelId: id, status: isFavorite ? 1 : 0, typeReloaded: offerType}));
     }
-    dispatch(postFavoriteAction({hotelId: id,status: isFavorite ? 1 : 0, typeReloaded: offerType}));
   };
 
   return (

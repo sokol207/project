@@ -10,7 +10,7 @@ import FavoritesScreen from '../../pages/favorites-screen/favorites-screen';
 import {useAppSelector} from '../../hooks';
 import LoadingScreen from '../../pages/loading-screen/loading-screen';
 import NotFound from '../not-found/not-found';
-import HistoryRouter from '../history-route/history-route';
+import HistoryRouter from '../history-router/history-router';
 import browserHistory from '../../browser-history';
 import OfferScreen from '../../pages/offer-screen/offer-screen';
 import {getAuthorizationStatus} from '../../store/user-process/selectors';
