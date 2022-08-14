@@ -35,6 +35,7 @@ function OfferScreen(): JSX.Element {
   const otherOffer = useAppSelector(getOtherOffers);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const points = pointsForMap(otherOffer);
+  const userStatus = useAppSelector(getAuthorizationStatus);
   if (currentOffer !== null) {
     points.push({id: currentOffer.id, point: currentOffer.location});
   }
@@ -44,7 +45,9 @@ function OfferScreen(): JSX.Element {
     0
   );
   const HandleClick = (id:number,isFavorite: boolean) => {
-    dispatch(postFavoriteAction({hotelId: id,status: isFavorite ? 1 : 0, typeReloaded: 'comment'}));
+    if (userStatus === AuthorizationStatus.Auth) {
+      dispatch(postFavoriteAction({hotelId: id, status: isFavorite ? 1 : 0, typeReloaded: 'comment'}));
+    }
   };
   const onSubmit = (comment:CommentPostType) => {
     dispatch(addComment(comment));
