@@ -19,7 +19,7 @@ function LoginScreen(): JSX.Element {
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (loginRef.current !== null && passwordRef.current !== null) {
+    if (loginRef.current !== null && passwordRef.current !== null && passwordRef.current.value.length >= 2 && passwordRef.current.value.search(/\d/g) !== -1 && passwordRef.current.value.search(/[A-Za-z]/g) !== -1) {
       onSubmit({
         email: loginRef.current.value,
         password: passwordRef.current.value,
@@ -45,7 +45,7 @@ function LoginScreen(): JSX.Element {
               </div>
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">Password</label>
-                <input className="login__input form__input" type="password" name="password" placeholder="Password" required ref={passwordRef} autoComplete="on"/>
+                <input className="login__input form__input" type="password" name="password" minLength={2} pattern={'[0-9A-Za-z].*'} placeholder="Password" required ref={passwordRef} autoComplete="on"/>
               </div>
               <button className="login__submit form__submit button" type="submit">Sign in</button>
             </form>

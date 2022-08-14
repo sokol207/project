@@ -30,9 +30,6 @@ export type OfferList = {
   regionName: string;
   offers: OfferCardList;
 };
-
-export type OfferListForPage = OfferList[];
-
 export type OfferToList = {
   offer: OfferCard;
 };

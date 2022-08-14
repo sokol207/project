@@ -198,7 +198,7 @@ function OfferScreen(): JSX.Element {
                     </svg>
                   </label>
                 </div>
-                <textarea onChange={(evt) => {const {value} = evt.target; setTextYourReview(value);}} value={textYourReview} className="reviews__textarea form__textarea" id="review" name="review" placeholder="Tell how was your stay, what you like and what can be improved"/>
+                <textarea onChange={(evt) => {const {value} = evt.target; setTextYourReview(value);}} value={textYourReview} minLength={50} className="reviews__textarea form__textarea" id="review" name="review" placeholder="Tell how was your stay, what you like and what can be improved"/>
                 <div className="reviews__button-wrapper">
                   <p className="reviews__help">
                     To submit review please make sure to set <span className="reviews__star">rating</span> and describe
